@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Инфо — UNРКН</title>
+<style>
+        /* * ==========================================================
+         * СТИЛИ ДЛЯ КОНТЕЙНЕРА КНОПКИ СКАЧИВАНИЯ
+         * Все стили изолированы внутри класса .download-button-container
+         * ==========================================================
+        */
+        
+        .download-button-container {
+            /* * Этот контейнер нужен для изоляции стилей.
+            
+             */
+            
+            /* Локальные CSS-переменные, чтобы не конфликтовать с :root */
+            --dl-blue-start: #007bff;
+            --dl-blue-end: #00bcd4;
+            --dl-white: #ffffff;
+            --dl-transition-speed: 0.3s;
+            
+            /* Обеспечиваем правильное отображение */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box; /* Гарантирует, что padding/border не сломают верстку */
+        }
+        
+        /* Применяем box-sizing ко всем вложенным элементам для предсказуемости */
+        .download-button-container *,
+        .download-button-container *::before,
+        .download-button-container *::after {
+            box-sizing: inherit;
+        }
+
+        .download-button-container .download-button {
+            /* Основные стили кнопки */
+            --button-size: 50px; /* Размер иконки на мобильных */
+            width: 140px; /* Ширина кнопки на ПК */
+            height: var(--button-size);
+            padding: 0 20px;
+            margin: 0; /* Убираем отступы по умолчанию */
+            border: none;
+            border-radius: 25px; /* Скругленные углы */
+            cursor: pointer;
+            outline: none;
+            display: inline-flex; /* Используем inline-flex, чтобы кнопка вела себя как элемент строки */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dl-white);
+            text-decoration: none; /* Убираем подчеркивание у ссылки */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+
+            /* Градиентный фон */
+            background-image: linear-gradient(135deg, var(--dl-blue-start) 0%, var(--dl-blue-end) 100%);
+            transition: all var(--dl-transition-speed) ease-out;
+            will-change: transform, box-shadow;
+        }
+
+        /* Анимация при наведении */
+        .download-button-container .download-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background-image: linear-gradient(135deg, #0056b3 0%, #0097a7 100%);
+            color: var(--dl-white); /* Убедимся, что цвет текста не меняется */
+        }
+
+        /* Анимация при нажатии */
+        .download-button-container .download-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition-duration: 0.1s;
+        }
+
+        .download-button-container .button-icon {
+            font-size: 20px;
+            line-height: 1;
+            transition: transform var(--dl-transition-speed) ease-out;
+            color: var(--dl-white); /* Явно задаем цвет */
+        }
+
+        /* Эффект пульсации/движения иконки при наведении */
+        .download-button-container .download-button:hover .button-icon {
+            transform: translateY(2px);
+        }
+
+        .download-button-container .button-text {
+            transition: opacity var(--dl-transition-speed) ease-out;
+            display: inline;
+            color: var(--dl-white); /* Явно задаем цвет */
+        }
+
+        /* Адаптивность для мобильных устройств (кнопка становится круглой иконкой) */
+        @media (max-width: 600px) {
+            .download-button-container .download-button {
+                width: var(--button-size);
+                padding: 0;
+                border-radius: 50%; /* Круглая форма */
+            }
+
+            .download-button-container .button-text {
+                display: none; /* Скрыть текст на мобильных */
+            }
+
+            .download-button-container .button-icon {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="assets/style.css">
+
+</head>
+<body>
+  <div class="bg-anim" aria-hidden="true"></div>
+  <div id="pageLoader" class="loader-overlay">
+    <div class="loader-circle" aria-hidden="true"></div>
+    <div class="loader-text">Загрузка</div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+  <a class="brand" href="index.html">UNРКН</a>
+      <button class="nav-toggle" id="navToggle2" aria-label="Открыть меню">☰</button>
+      <nav class="nav" id="mainNav2">
+  <a href="index.html">Главная</a>
+  <a href="info.html" class="active">Инфо</a>
+  <a href="runet.html">РУНЕТ</a>
+  <a href="vk.html">ВК</a>
+  <a href="posts.html">Посты</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="animate fade-up">О проекте</h1>
+    <p class="animate fade-up">Этот сайт создан для документирования и обсуждения проблем, связанных с Роскомнадзором и проектами, которые он поддерживает или контролирует.</p>
+    <h2 class="animate fade-up">Цели</h2>
+    <ul class="animate fade-up">
+      <li>Собирать проверенные факты и ссылки на источники.</li>
+      <li>Анализировать угрозы приватности и свободе слова.</li>
+      <li>Делиться рекомендациями по безопасному использованию сервисов.</li>
+    </ul>
+
+    <h2 class="animate fade-up">Как мы проверяем информацию</h2>
+    <ol>
+      <li>Используем первоисточники: официальные документы, правовые акты, публикации СМИ.</li>
+      <li>Сравниваем независимые отчёты и технические анализы.</li>
+      <li>По возможности приводим ссылки на аудиты и исследовательские работы.</li>
+    </ol>
+      <h2 class="animate fade-up">Публикация постов</h2>
+     <p class="animate fade-up">При желании опубликовать пост, напишите на почту ниже ("Контакты и вклад") и прикрепите файл в формате ".pdf", или ".txt" с вашей статьей. Модерация может занимать от одного, до пяти дней.</p>
+     <p class="animate fade-up">Мы одобряем критический взгляд на правительственные органы, однако запрещаем использовать оскорбления и "грязные" слова: нецензурную лексику, 18+ контент и т.д.</p>
+     <p class="animate fade-up">При желании добавить в какую-либо статью фотграфию, загружайте фотографии до 24 МБ, прикрепленные внутрь ".pdf" файла со статьёй. На фотографиях запрещается изображать лица реальных людей, 18+ контнент, нецензурную лексику, слив личных данных других пользователей сети Интернет.</p>
+     <p class="animate fade-up">Материалы имеют аналитический характер. При использовании источников всегда указывайте ссылки и даты публикаций.</p>
+
+    <h2 class="animate fade-up">Контакты и вклад</h2>
+    <p class="animate fade-up">Свяжитесь с нами в Discord: <a href="https://discordapp.com/users/1340334027730714706/">@unrkn</a></p>
+    <p class="animate fade-up">Или свяжитесь с нами по почте: <a href="mailto:compixelize@gmail.com">Почта</a></p>
+
+    
+ <h2 class="animate fade-up">Помощь в распространении</h2>
+<p class="animate fade-up">   Если вы хотите помочь в распространении данного сайта (и контента на нём), помочь людям узнать больше об интернете, можете установить PDF-презентацию о проекте с QR-кодом (+ссылкой) и кратким описанием проекта, и поделиться ей с родными, друзьями, или людьми в вашем сообществе. Спасибо!</p>
+<div class="download-button-container">
+        <a id="downloadBtn" href="#" class="download-button" download>
+            <span class="button-icon">↓</span>
+            <span class="button-text">Скачать</span>
+        </a>
+    </div>
+<script>
+        // Этот JS-код безопасен, так как он ищет элемент по ID ('downloadBtn'),
+        // который мы используем только в этой кнопке.
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Если скрипт по какой-то причине не найдет кнопку
+            // (например, ее нет на странице), он просто ничего не сделает.
+            if (downloadBtn) {
+            
+                // *** 1. Установите вашу ссылку на файл здесь: ***
+                const fileUrl = 'https://kivasily.github.io/unrkn/data/unrkn_v.2.pdf'; // <-- ЗАМЕНИТЕ ЭТО
+                
+                // Устанавливаем ссылку на элемент <a>
+                downloadBtn.href = fileUrl;
+
+                // 2. JS для обработки клика (дополнительно)
+                downloadBtn.addEventListener('click', (event) => {
+                    console.log('Начата попытка загрузки файла:', fileUrl);
+                    
+                    downloadBtn.classList.add('is-downloading');
+                    
+                    setTimeout(() => {
+                        downloadBtn.classList.remove('is-downloading');
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+
+    
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+  <p> UNРКН — информационный проект.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
+
+
+
+
+
+

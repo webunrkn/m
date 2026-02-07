@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Переход на внешний сайт</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/script.js" defer></script>
+  <style>
+    /* Дополнительные стили для блока предупреждения */
+    .redirect-container {
+      max-width: 420px;
+      margin: 100px auto;
+      background: var(--muted);
+      box-shadow: 0 0 18px #1ea7ff22;
+      border-radius: 14px;
+      padding: 40px 28px 32px 28px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .redirect-container h2 {
+      color: var(--navy);
+      font-size: 1.5em;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+    .redirect-container p {
+      color: #23415a;
+      margin-bottom: 28px;
+      font-size: 1.05em;
+    }
+    .redirect-btn {
+      display: inline-block;
+      margin: 10px 12px 0 12px;
+      padding: 12px 34px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: var(--white);
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.2s;
+    }
+    .redirect-btn.cancel {
+      background: #e04f5f;
+    }
+    .redirect-btn:hover {
+      background: #199ae0;
+    }
+    .redirect-btn.cancel:hover {
+      background: #cb2740;
+    }
+    /* Анимированный фон, как на основной странице */
+    .bg-anim { }
+  </style>
+</head>
+<body>
+  <div class="bg-anim"></div>
+  <div class="redirect-container animate fade-up">
+    <h2>Вы покидаете сайт unrkn</h2>
+    <p>Вы собираетесь перейти на внешний ресурс.<br>Продолжить?</p>
+    <a class="redirect-btn" href="https://external-link1.example.com" target="_blank" rel="noopener">Продолжить</a>
+    <a class="redirect-btn cancel" href="vk.html">Отмена</a>
+  </div>
+</body>
+</html>

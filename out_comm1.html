@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Переход — внешний ресурс</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="bg-anim" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">UNРКН</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="redirect-card fade-in-up">
+      <h1>Вы покидаете сайт</h1>
+      <p>Вы собираетесь перейти на внешний ресурс: <strong>https://vk.com/khaiomtop4ik</strong></p>
+      <p>Этот ресурс может содержать материалы, не подходящие для всех аудиторий.</p>
+      <div style="display:flex;gap:0.75rem;margin-top:1rem;align-items:center">
+        <a class="btn btn-danger" href="vk.html">Отмена</a>
+        <button id="goBtn" class="btn btn-primary">Перейти</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="miniLoader" class="loader-overlay" style="background:rgba(7,33,70,0.85);display:none">
+    <div class="loader-circle" aria-hidden="true" style="width:48px;height:48px;border-width:5px"></div>
+    <div class="loader-text">Переход...</div>
+  </div>
+
+  <script>
+    document.getElementById('goBtn').addEventListener('click', function(){
+      var l = document.getElementById('miniLoader');
+      l.style.display = 'flex';
+      setTimeout(function(){ window.location.href = 'https://vk.com/khaiomtop4ik'; }, 800);
+    });
+  </script>
+</body>
+</html>

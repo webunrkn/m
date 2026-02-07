@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UNРКН — Посты</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* Только для страницы постов: анимированный nav-бар */
+    .navbar-animated {
+      background: linear-gradient(90deg, #1ea7ff, #3ec6ff, #072146, #1ea7ff 90%);
+      background-size: 300% 100%;
+  animation: navbarGradient 13s ease-in-out infinite;
+      box-shadow: 0 2px 12px 0 rgba(30,167,255,0.08);
+    }
+    @keyframes navbarGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .navbar-animated .nav a { transition: background 0.3s, color 0.3s; }
+    .navbar-animated .nav a.active {
+      background: rgba(255,255,255,0.18);
+      color: #072146;
+      box-shadow: 0 2px 8px 0 rgba(30,167,255,0.10) inset;
+    }
+    /* Стили для страницы "Посты" (Cusdis). Вынесены сюда из assets/style.css */
+    .posts-page .cusdis-card {
+      max-width: 800px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px 0 rgba(30,167,255,0.10);
+      padding: 1.1em 2.2em 1.1em 2.2em;
+      background: #f7fbff;
+      margin-top: 1.2rem !important; /* небольшой отступ от navbar */
+      margin-bottom: 0.6rem !important;
+    }
+
+    .posts-page #cusdis_thread {
+      --cusdis-color-primary: #1ea7ff;
+      --cusdis-color-primary-hover: #0b6fc2;
+      --cusdis-color-border: #b3e0ff;
+      --cusdis-color-input-bg: #fff;
+      --cusdis-color-input-text: #072146;
+      --cusdis-color-btn-text: #fff;
+      --cusdis-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      font-family: var(--cusdis-font-family);
+      border-radius: 14px;
+      box-shadow: 0 2px 12px 0 rgba(30,167,255,0.07);
+      padding: 1.2em 0.6em 0.8em 0.6em !important;
+      background: #fff;
+      margin: 0 auto;
+      max-width: 100%;
+      min-height: 240px !important;
+      height: auto !important;
+      display: block; /* keep the widget block-level so it doesn't stretch other layout elements */
+    }
+    .posts-page #cusdis_thread input, .posts-page #cusdis_thread textarea {
+      font-family: var(--cusdis-font-family);
+      border-radius: 8px !important;
+      border: 1.5px solid var(--cusdis-color-border) !important;
+      background: var(--cusdis-color-input-bg) !important;
+      color: var(--cusdis-color-input-text) !important;
+      padding: 1.1em 1.2em !important;
+      font-size: 1.08em !important;
+      margin-bottom: 1.2em !important;
+      box-shadow: none !important;
+      transition: border-color 0.18s;
+    }
+    .posts-page #cusdis_thread textarea {
+      min-height: 200px !important;
+      resize: vertical !important;
+    }
+    .posts-page #cusdis_thread .cd-form {
+      min-height: 360px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      gap: 0.8em !important;
+      padding-top: 1.2em !important;
+      padding-bottom: 1.2em !important;
+      border: 2px solid rgba(179,224,255,0.45) !important;
+      border-radius: 12px !important;
+      background: #fbfeff !important;
+    }
+    .posts-page #cusdis_thread .cd-form label {
+      font-size: 1.04em !important;
+      margin-bottom: 0.3em !important;
+    }
+    .posts-page #cusdis_thread .cd-comment {
+      border-radius: 10px;
+      background: #f4f7fb;
+      margin-bottom: 1.1em;
+      padding: 0.8em 1em;
+      font-size: 1.01em;
+    }
+    .posts-page #cusdis_thread .cd-comment-author {
+      font-weight: 700;
+      color: #1ea7ff;
+      font-family: var(--cusdis-font-family);
+    }
+    .posts-page #cusdis_thread .cd-comment-content {
+      font-family: var(--cusdis-font-family);
+      color: #072146;
+    }
+    .posts-page #cusdis_thread .cd-comment-time {
+      color: #6ca6d9;
+      font-size: 0.93em;
+    }
+    .posts-page #cusdis_thread .cd-thread {
+      margin-top: 1.2em;
+    }
+    /* Thread / channel-like card (image left, title + subtitle right, link below). */
+    .thread-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      cursor: default;
+      overflow: hidden;
+    }
+    .thread-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(4,10,20,0.08); }
+    .thread-card .thumb {
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #eef8ff, #f7fbff);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(30,167,255,0.06) inset;
+    }
+    .thread-card .thumb img { width:100%; height:100%; object-fit:cover; display:block }
+    .thread-card .thread-body { flex: 1 1 auto; min-width:0 }
+    .thread-card h3 { margin:0 0 0.25rem 0; font-size:1.03rem; color:var(--navy); line-height:1.15 }
+    .thread-card h5 { margin:0; font-size:0.92rem; color:#23415a; font-weight:400; opacity:0.95 }
+    .thread-card .thread-link { display:inline-block; margin-top:0.65rem; color:var(--blue); text-decoration:none; font-weight:600 }
+    .thread-card .meta { margin-top:0.5rem; font-size:0.85rem; color:#6b8599 }
+
+    /* Make whole card keyboard-focusable when it has data-href */
+    .thread-card[tabindex] { outline: none }
+
+    /* Responsive: reduce image and padding on small screens */
+    @media (max-width:700px) {
+      .thread-card { gap:0.75rem; padding:0.7rem; }
+      .thread-card .thumb { width:52px; height:52px; flex:0 0 52px }
+      .thread-card h3 { font-size:1rem }
+      .thread-card h5 { font-size:0.9rem }
+    }
+    @media (max-width:420px) {
+      .thread-card { gap:0.6rem; padding:0.6rem; }
+      .thread-card .thumb { width:48px; height:48px; flex:0 0 48px }
+      .thread-card .thread-link { display:block; margin-top:0.5rem }
+    }
+    /* Ensure animated/card blocks have safe side gutters on all viewports */
+    .posts-page .container { padding-left: 1rem; padding-right: 1rem; }
+    .posts-page .card { box-sizing: border-box; margin-left: auto; margin-right: auto; max-width: 1000px; }
+    .posts-page .animate.fade-up { padding-left: 0.25rem; padding-right: 0.25rem; }
+    @media (max-width:900px) {
+      .posts-page .container { padding-left: 0.9rem; padding-right: 0.9rem; }
+      .posts-page .card { margin-left: 0.8rem; margin-right: 0.8rem; max-width: calc(100% - 1.6rem); }
+      .posts-page .animate.fade-up { padding-left: 0.6rem; padding-right: 0.6rem; }
+      .posts-page .thread-card { padding-left: 0.6rem; padding-right: 0.6rem; }
+    }
+    @media (max-width:420px) {
+      .posts-page .container { padding-left: 0.9rem; padding-right: 0.9rem; }
+      .posts-page .card { margin-left: 0.9rem; margin-right: 0.9rem; max-width: calc(100% - 1.8rem); padding-left: 0.5rem; padding-right: 0.5rem; }
+      .posts-page .animate.fade-up { padding-left: 0.9rem; padding-right: 0.9rem; }
+      .posts-page .thread-card { padding-left: 0.5rem; padding-right: 0.5rem; }
+    }
+  </style>
+</head>
+<body class="posts-page">
+  <div class="bg-anim" aria-hidden="true"></div>
+  <div id="pageLoader" class="loader-overlay">
+    <div class="loader-circle" aria-hidden="true"></div>
+    <div class="loader-text">Загрузка</div>
+  </div>
+
+  <header class="site-header navbar-animated">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">UNРКН</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Открыть меню">☰</button>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Главная</a>
+        <a href="info.html">Инфо</a>
+        <a href="runet.html">РУНЕТ</a>
+        <a href="vk.html">ВК</a>
+        <a href="posts.html" class="active">Посты</a>
+      </nav>
+    </div>
+  </header>
+
+
+
+
+
+<section class="card animate fade-up cusdis-card" style="margin-top:1rem;">
+  <h2 style="margin-bottom:0.7em;">Посты и обсуждение</h2>
+  <p style="margin-bottom:1.2em; color:#23415a;">Вы можете оставить пост или комментарий без регистрации. Сообщения модерируются.</p>
+  <div id="cusdis_thread"
+    data-host="https://cusdis.com"
+    data-app-id="db8a7fa3-1ae6-4d63-933d-9f0c85de818e"
+    data-page-id="posts"
+    data-page-url="https://vasil.github.io/anti-rkn-site/posts.html"
+    data-page-title="Посты"
+    data="auto"
+    ></div>
+  <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+  <noscript>Для работы комментариев требуется включить JavaScript.</noscript>
+  <div style="text-align:right; margin-top:1.5em;">
+    <button class="btn-report" id="openReportModal" type="button">Пожаловаться</button>
+  </div>
+</section>
+
+<!-- Example channel/thread card: image left, title & text right, ссылка снизу -->
+<section class="card animate fade-up thread-card" data-href="stat001.html">
+  <div class="thumb" aria-hidden="true">
+    <img src="img/proxy.png" alt="Аватар ветки">
+  </div>
+  <div class="thread-body">
+    <h3>Подробнее - как работает "прокси"</h3>
+    <h5>Узнайте в подробностях, как работает прокси - Unrkn✅.</h5>
+    <a class="thread-link" href="stat001.html">Перейти к статье</a>
+  </div>
+</section>
+
+
+
+<!-- cusdis styles moved to assets/style.css scoped under .posts-page to avoid leaking to other pages -->
+
+ <h3 class="animate fade-up">      Мы понимаем, что система постов (комментариев) может показаться неудобной, из-за маленького размера окна с написанием и прочтением комментариев. К сожалению, сейчас мы не можем сменить ее на другую. Для обратной связи с разработчиком лучше воспользуйтесь почтой или DS на странице "Инфо".</h3>
+ 
+  <footer class="site-footer">
+    <div class="container">
+      <p> UNРКН — информационный проект. Материалы носят аналитический характер.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+  <script>
+    // Модалка жалобы (переносим кнопку внутрь блока Cusdis)
+    document.addEventListener('DOMContentLoaded', function() {
+      const openBtn = document.getElementById('openReportModal');
+      let modal = document.getElementById('modalReport');
+      // Если модалка уже есть (после первого открытия)
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.className = 'modal-report';
+        modal.id = 'modalReport';
+        modal.style.display = 'none';
+        modal.innerHTML = `
+          <div class="modal-report-backdrop" id="modalReportBackdrop"></div>
+          <div class="modal-report-content">
+            <button class="modal-report-close" id="closeReportModal" title="Закрыть">×</button>
+            <h3>Жалоба на сообщение</h3>
+            <p style="margin-bottom:1.2em;">Раздел в разработке. Приём жалоб временно недоступен.</p>
+            <button class="btn-report" id="closeReportModal2" type="button">Понятно</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      if (openBtn && modal) {
+        openBtn.onclick = () => { modal.style.display = 'block'; };
+        const closeModal = () => { modal.style.display = 'none'; };
+        modal.querySelectorAll('#closeReportModal, #closeReportModal2, #modalReportBackdrop').forEach(el => {
+          if (el) el.onclick = closeModal;
+        });
+        window.addEventListener('keydown', e => {
+          if (modal.style.display === 'block' && (e.key === 'Escape' || e.key === 'Esc')) closeModal();
+        });
+      }
+    });
+  </script>
+  <style>
+    .btn-report {
+      background: #e53935;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 0.55em 1.5em;
+      font-size: 1.08em;
+      font-family: 'Segoe UI Semibold', 'Inter', Arial, sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      margin-top: 1.2em;
+      box-shadow: 0 2px 12px 0 rgba(229,57,53,0.10);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      outline: none;
+    }
+    .btn-report:hover, .btn-report:focus {
+      background: #b71c1c;
+      box-shadow: 0 4px 18px 0 rgba(229,57,53,0.16);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .modal-report {
+      position: fixed; z-index: 1002; left: 0; top: 0; width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: all;
+    }
+    .modal-report-backdrop {
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(7,33,70,0.25);
+      backdrop-filter: blur(2px);
+      z-index: 0;
+    }
+    .modal-report-content {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(30,167,255,0.13);
+      padding: 2.2em 1.5em 1.5em 1.5em;
+      min-width: 270px;
+      max-width: 96vw;
+      z-index: 1;
+      text-align: center;
+      animation: fadeUpModal 0.32s cubic-bezier(.2,.8,.2,1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-report-close {
+      position: absolute; right: 0.7em; top: 0.7em;
+      background: none; border: none; color: #b71c1c; font-size: 1.5em; cursor: pointer;
+      padding: 0; line-height: 1;
+      border-radius: 50%;
+      width: 2em; height: 2em;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s;
+    }
+    .modal-report-close:hover, .modal-report-close:focus {
+      background: #fbe9e7;
+    }
+    @keyframes fadeUpModal {
+      0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+      100% { opacity: 1; transform: none; }
+    }
+    @media (max-width: 600px) {
+      .modal-report-content {
+        min-width: 0;
+        width: 96vw;
+        padding: 1.2em 0.5em 1em 0.5em;
+      }
+    }
+  </style>
+  <script>
+    // Make .thread-card clickable and keyboard-accessible when data-href is present
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.thread-card').forEach(function(card){
+        const href = card.dataset.href || card.querySelector('.thread-link')?.href;
+        if (!href) return;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function(e){
+          // allow normal clicks on inner links to work
+          const targetLink = e.target.closest('a');
+          if (targetLink) return;
+          window.location.href = href;
+        });
+        card.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = href; }
+        });
+      });
+    });
+  </script>
+ 
+</body>
+</html>
+
