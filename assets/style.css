@@ -179,7 +179,7 @@ body::before{ content: ""; position: fixed; inset:0; z-index:-2; background: lin
 .nav-more-btn[aria-expanded="true"] .more-bar:nth-child(3){transform: translateY(-6px) rotate(-45deg)}
 
 
-.card{background:var(--white);padding:1rem;border-radius:8px;box-shadow:0 1px 4px rgba(4,10,20,0.06)}
+.card{background:var(--white);padding:1rem;border-radius:20px;box-shadow:0 1px 4px rgba(4,10,20,0.06)}
 .card h3{margin:0 0 0.5rem}
 .read-more{color:var(--blue);text-decoration:none;font-weight:600}
 .card p{color:#223248}
@@ -317,3 +317,4 @@ a, button { -webkit-tap-highlight-color: rgba(0,0,0,0.06); touch-action: manipul
 @media(max-width:1000px){ .simple-channels-list{grid-template-columns:repeat(3,1fr)} }
 @media(max-width:700px){ .simple-channels-list{grid-template-columns:repeat(2,1fr)} .simple-avatar{width:56px;height:56px} }
 @media(max-width:420px){ .simple-channels-list{grid-template-columns:1fr} }
+
