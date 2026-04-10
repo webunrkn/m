@@ -6,14 +6,14 @@
   <title>UNРКН — Главная</title>
   <link rel="stylesheet" href="assets/style.css">
   <link rel="icon" href="img/unrkn-mini.png" type="image/x-icon">
+  <link rel="stylesheet" href="assets/tehwork.css">
 </head>
 <body>
   <!-- Всплывающее окно о технических работах -->
-      <div id="maintenanceBanner" class="maintenance-banner">
-    <span>На сайте ведутся технические работы, некоторые функции могут работать некорректно.</span>
-    <button id="closeMaintenanceBanner" class="maintenance-close" title="Закрыть">×</button>
-  </div> 
-
+ <div id="maintenanceBanner" class="maintenance-banner">
+        <span>На сайте ведутся технические работы, некоторые функции могут работать некорректно.</span>
+        <button id="closeMaintenanceBanner" class="maintenance-close" title="Закрыть">×</button>
+    </div>
   <div class="bg-anim" aria-hidden="true"></div>
   <div id="pageLoader" class="loader-overlay">
     <div class="loader-circle" aria-hidden="true"></div>
@@ -153,8 +153,9 @@
   <p> UNРКН — информационный проект. Материалы носят аналитический характер.</p>
     </div>
   </footer>
-
+  <script src="assets/tehwork.js"></script>
   <script src="assets/script.js"></script>
+ <!--
   <script>
     // Закрытие баннера о технических работах: переключаем класс hide (CSS управляет анимацией)
     document.addEventListener('DOMContentLoaded', function() {
@@ -172,7 +173,8 @@
         };
       }
     });
-  </script>
+  </script> -->
+  
   <!-- Оригинальная страница: https://webunrkn.github.io/m/  -->
           <!-- Оригинальный разработчик: https://github.com/webunrkn  -->
 </body>
