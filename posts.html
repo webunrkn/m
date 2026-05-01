@@ -172,6 +172,142 @@
       .posts-page .animate.fade-up { padding-left: 0.9rem; padding-right: 0.9rem; }
       .posts-page .thread-card { padding-left: 0.5rem; padding-right: 0.5rem; }
     }
+    /* Всплывающее окно жалобеньки*/
+    /* 1. СТИЛЬ КНОПКИ "ПОЖАЛОВАТЬСЯ" */
+#openReportModal {
+    background-color: #ff4d4d; /* Красный цвет */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Закругление */
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+#openReportModal:hover {
+    background-color: #ff3333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4);
+}
+
+/* 2. ЛОГИКА ВСПЛЫВАЮЩЕГО ОКНА */
+.modal-report {
+    position: fixed; /* Фиксирует окно поверх всего сайта */
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 99999;
+    display: none; /* Скрыто по умолчанию */
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.modal-report.active {
+    display: flex;
+    pointer-events: auto;
+}
+
+/* Затемнение заднего плана */
+.modal-report-backdrop {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-report.active .modal-report-backdrop {
+    opacity: 1;
+}
+
+/* САМО СТЕКЛЯННОЕ ОКНО */
+.glass-panel {
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    max-height: 85vh;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    color: white;
+    text-align: center;
+    overflow-y: auto;
+    
+    /* Анимация появления */
+    transform: translateY(30px) scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-report.active .glass-panel {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* Анимация исчезновения */
+.modal-report.exit .glass-panel {
+    transform: translateY(30px) scale(0.9);
+    opacity: 0;
+}
+.modal-report.exit .modal-report-backdrop {
+    opacity: 0;
+}
+
+/* СТИЛИ ФОРМЫ И ПОЛЕЙ */
+.glass-form { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    outline: none;
+    transition: 0.2s;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.input-row { display: flex; gap: 10px; }
+.half { width: 50%; }
+
+/* Капча */
+.captcha-box {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(0,0,0,0.2);
+    padding: 10px; border-radius: 12px; margin: 5px 0;
+    border: 1px dashed rgba(255,255,255,0.3);
+}
+
+.btn-report-submit {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-report-submit:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* Кнопка закрытия */
+.modal-report-close {
+    position: absolute; top: 15px; right: 15px;
+    background: none; border: none; color: rgba(255,255,255,0.5);
+    font-size: 24px; cursor: pointer;
+}
   </style>
 </head>
 <body class="posts-page">
@@ -258,208 +394,89 @@
 <!-- Оригинальная страница: https://webunrkn.github.io/m/  -->
           <!-- Оригинальный разработчик: https://github.com/webunrkn  -->
   <script src="assets/script.js"></script>
- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const openBtn = document.getElementById('openReportModal');
-      let modal = document.getElementById('modalReport');
-      let currentCaptchaAnswer = 0;
+<script>document.addEventListener('DOMContentLoaded', function() {
+    const openBtn = document.getElementById('openReportModal');
+    let currentCaptchaAnswer = 0;
 
-      // Функция генерации простой капчи
-      function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        currentCaptchaAnswer = num1 + num2;
-        
-        const questionEl = document.getElementById('captchaQuestion');
-        const inputEl = document.getElementById('captchaInput');
-        if(questionEl) questionEl.innerText = `Сколько будет ${num1} + ${num2}?`;
-        if(inputEl) inputEl.value = '';
-      }
+    // Функция генерации капчи
+    function generateCaptcha() {
+        const n1 = Math.floor(Math.random() * 10) + 1;
+        const n2 = Math.floor(Math.random() * 10) + 1;
+        currentCaptchaAnswer = n1 + n2;
+        const q = document.getElementById('captchaQuestion');
+        if (q) q.innerText = `${n1} + ${n2} = ?`;
+        document.getElementById('captchaInput').value = '';
+    }
 
-      if (!modal) {
+    // Создаем модалку, если её нет
+    let modal = document.getElementById('modalReport');
+    if (!modal) {
         modal = document.createElement('div');
         modal.className = 'modal-report';
         modal.id = 'modalReport';
-        modal.style.display = 'none';
-        
-        // В action="" потом вставишь ссылку от сервиса отправки писем
         modal.innerHTML = `
-          <div class="modal-report-backdrop" id="modalReportBackdrop"></div>
-          <div class="modal-report-content glass-panel" id="modalGlassPanel">
-            <button class="modal-report-close" id="closeReportModal" title="Закрыть">×</button>
-            <h3>Жалоба на сообщение</h3>
-            
-            <div style="display: flex; justify-content: center; align-items: center; margin: 0.5em 0;">
-                <img src="img/error.gif" 
-                     style="border-radius: 50px; width: 180px; height: auto;" 
-                     alt="Деватька()">
+            <div class="modal-report-backdrop" id="modalBackdrop"></div>
+            <div class="glass-panel">
+                <button class="modal-report-close" id="closeX">×</button>
+                <h3>Жалоба на сообщение</h3>
+                <img src="img/error.gif" style="border-radius: 40px; width: 150px; margin: 10px 0;" alt="!">
+                
+                <form id="reportForm" action="ТВОЙ_EMAIL_SERVICE_URL" method="POST" class="glass-form">
+                    <input type="text" name="user_nick" placeholder="Ваш никнейм" required class="glass-input">
+                    <input type="email" name="user_email" placeholder="Ваш Email" required class="glass-input">
+                    <textarea name="msg_text" placeholder="Текст комментария..." required class="glass-input" rows="2"></textarea>
+                    <div class="input-row">
+                        <input type="text" name="msg_author" placeholder="Автор" required class="glass-input half">
+                        <input type="date" name="msg_date" required class="glass-input half" style="color-scheme: dark;">
+                    </div>
+                    <div class="captcha-box">
+                        <span id="captchaQuestion">Загрузка...</span>
+                        <input type="number" id="captchaInput" placeholder="Ответ" required class="glass-input" style="width: 70px; margin:0;">
+                    </div>
+                    <button type="submit" class="btn-report-submit">Отправить жалобу</button>
+                </form>
+                
+                <p style="font-size: 13px; opacity: 0.8;">
+                    Или наш <a href="https://discordapp.com/users/1340334027730714706/" style="color: #5865F2; font-weight: bold;">Discord</a>.
+                </p>
             </div>
-
-            <!-- Стеклянная форма -->
-            <form id="reportForm" action="https://formspree.io/f/xaqvnyrz" method="POST" class="glass-form">
-                <input type="text" name="nickname" placeholder="Ваш никнейм" required class="glass-input">
-                <input type="email" name="email" placeholder="Ваш Email" required class="glass-input">
-                <textarea name="comment_text" placeholder="Текст комментария, на который жалуетесь" required class="glass-input" rows="2"></textarea>
-                <div class="input-row">
-                    <input type="text" name="comment_author" placeholder="Автор" required class="glass-input half">
-                    <input type="date" name="comment_date" required class="glass-input half" title="Дата комментария">
-                </div>
-                
-                <!-- Капча -->
-                <div class="captcha-box">
-                    <span id="captchaQuestion">Сколько будет ...?</span>
-                    <input type="number" id="captchaInput" placeholder="Ответ" required class="glass-input captcha-input">
-                </div>
-                
-                <button class="btn-report" id="submitReportBtn" type="submit">Отправить жалобу</button>
-            </form>
-
-            <p style="margin-top:1em; font-size: 14px;">Или используйте наш <a href="https://discordapp.com/users/1340334027730714706/" class="glass-link">Discord</a>.</p>
-          </div>
         `;
         document.body.appendChild(modal);
-      }
-      
-      if (openBtn && modal) {
-        const glassPanel = document.getElementById('modalGlassPanel');
-        
-        openBtn.onclick = () => { 
-            modal.style.display = 'flex'; 
-            glassPanel.classList.remove('glass-fade-out');
-            generateCaptcha(); // Генерируем капчу при каждом открытии
-        }; 
-        
-        const closeModal = () => { 
-            glassPanel.classList.add('glass-fade-out');
-            // Ждем 300мс (пока идет анимация), затем скрываем окно
+    }
+
+    if (openBtn) {
+        const closeMod = () => {
+            modal.classList.add('exit');
             setTimeout(() => {
-                modal.style.display = 'none';
-                glassPanel.classList.remove('glass-fade-out');
+                modal.classList.remove('active');
+                modal.classList.remove('exit');
             }, 300);
         };
-        
-        modal.querySelectorAll('#closeReportModal, #modalReportBackdrop').forEach(el => {
-          if (el) el.onclick = closeModal;
-        });
-        
-        window.addEventListener('keydown', e => {
-          if (modal.style.display === 'flex' && (e.key === 'Escape' || e.key === 'Esc')) closeModal();
-        });
 
-        // Проверка капчи перед отправкой
-        const form = document.getElementById('reportForm');
-        if (form) {
-            form.onsubmit = (e) => {
-                const userAnswer = parseInt(document.getElementById('captchaInput').value);
-                if (userAnswer !== currentCaptchaAnswer) {
-                    e.preventDefault(); // Отменяем отправку письма
-                    alert('Неверный ответ в капче! Попробуйте еще раз.');
-                    generateCaptcha(); // Обновляем задание
-                }
-            };
-        }
-      }
-    });
+        openBtn.onclick = (e) => {
+            e.preventDefault();
+            modal.classList.add('active');
+            generateCaptcha();
+        };
+
+        document.getElementById('closeX').onclick = closeMod;
+        document.getElementById('modalBackdrop').onclick = closeMod;
+        
+        window.onkeydown = (e) => { if (e.key === 'Escape') closeMod(); };
+
+        // Валидация капчи
+        document.getElementById('reportForm').onsubmit = function(e) {
+            const ans = parseInt(document.getElementById('captchaInput').value);
+            if (ans !== currentCaptchaAnswer) {
+                e.preventDefault();
+                alert('Ошибка капчи! Попробуйте еще раз.');
+                generateCaptcha();
+            }
+        };
+    }
+});
 </script>
-  <style>
-   
-
-/* Эффект стекла */
-/* --- Адаптивное окно Liquid Glass --- */
-.modal-report-content.glass-panel {
-  position: relative;
-  z-index: 10000;
-  width: 90%; /* На телефонах занимает 90% ширины экрана */
-  max-width: 380px; /* На ноутбуках окно не будет шире 380px (аккуратная колонка) */
-  max-height: 85vh; /* Максимальная высота - 85% от экрана, чтобы оставались отступы сверху и снизу */
-  overflow-y: auto; /* Включаем вертикальную прокрутку, если форма не влезает */
-  
-  padding: 25px 20px; /* Слегка уменьшенные отступы для маленьких экранов */
-  border-radius: 24px;
-  text-align: center;
-  
-  /* Эффект стекла */
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  color: #fff;
-  animation: glassSlideUp 0.3s ease-out forwards;
-}
-
-/* --- Стилизация ползунка прокрутки (Webkit: Chrome, Safari, Edge) --- */
-.modal-report-content.glass-panel::-webkit-scrollbar {
-  width: 6px; /* Делаем ползунок тонким и аккуратным */
-}
-
-.modal-report-content.glass-panel::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05); /* Едва заметная дорожка */
-  border-radius: 10px;
-  margin: 15px 0; /* Отступы от краев окна */
-}
-
-.modal-report-content.glass-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25); /* Полупрозрачный белый ползунок */
-  border-radius: 10px;
-}
-
-.modal-report-content.glass-panel::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4); /* Чуть ярче при наведении */
-}
-
-/* --- Стилизация ползунка для Firefox --- */
-.modal-report-content.glass-panel {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
-}
-
-@keyframes glassSlideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Стили заголовка и ссылки */
-.glass-panel h3 { margin: 0 0 15px; font-size: 1.5rem; }
-.glass-panel p { font-size: 16px; color: rgba(255, 255, 255, 0.9); }
-
-.glass-link {
-  color: #5865F2; /* Цвет Discord */
-  text-decoration: none;
-  font-weight: bold;
-  border-bottom: 1px dashed #5865F2;
-  transition: 0.2s;
-}
-
-.glass-link:hover { color: #fff; border-bottom-color: #fff; }
-
-/* Стили кнопок */
-.glass-panel .btn-report {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 12px 30px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
-}
-
-.glass-panel .btn-report:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
-}
-
-.glass-panel .modal-report-close {
-  position: absolute;
-  top: 15px; right: 15px;
-  background: none; border: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 30px; cursor: pointer;
-}
-  
-   
-  </style>
+ 
   <script>
     // Make .thread-card clickable and keyboard-accessible when data-href is present
     document.addEventListener('DOMContentLoaded', function () {
