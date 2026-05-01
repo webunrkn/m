@@ -262,40 +262,102 @@
     document.addEventListener('DOMContentLoaded', function() {
       const openBtn = document.getElementById('openReportModal');
       let modal = document.getElementById('modalReport');
-      
+      let currentCaptchaAnswer = 0;
+
+      // Функция генерации простой капчи
+      function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        currentCaptchaAnswer = num1 + num2;
+        
+        const questionEl = document.getElementById('captchaQuestion');
+        const inputEl = document.getElementById('captchaInput');
+        if(questionEl) questionEl.innerText = `Сколько будет ${num1} + ${num2}?`;
+        if(inputEl) inputEl.value = '';
+      }
+
       if (!modal) {
         modal = document.createElement('div');
         modal.className = 'modal-report';
         modal.id = 'modalReport';
         modal.style.display = 'none';
+        
+        // В action="" потом вставишь ссылку от сервиса отправки писем
         modal.innerHTML = `
           <div class="modal-report-backdrop" id="modalReportBackdrop"></div>
-          <div class="modal-report-content glass-panel">
+          <div class="modal-report-content glass-panel" id="modalGlassPanel">
             <button class="modal-report-close" id="closeReportModal" title="Закрыть">×</button>
             <h3>Жалоба на сообщение</h3>
-            <div style="display: flex; justify-content: center; align-items: center; margin: 1em 0;">
+            
+            <div style="display: flex; justify-content: center; align-items: center; margin: 0.5em 0;">
                 <img src="img/error.gif" 
-                     style="border-radius: 50px; width: 300px; height: auto;" 
+                     style="border-radius: 50px; width: 180px; height: auto;" 
                      alt="Деватька()">
             </div>
-            <p style="margin-bottom:1.2em;">Используйте наш <a href="https://discordapp.com/users/1340334027730714706/" class="glass-link">Discord</a> для жалобы на любое сообщение.</p>
-            <button class="btn-report" id="closeReportModal2" type="button">Понятно</button>
+
+            <!-- Стеклянная форма -->
+            <form id="reportForm" action="https://formspree.io/f/xaqvnyrz" method="POST" class="glass-form">
+                <input type="text" name="nickname" placeholder="Ваш никнейм" required class="glass-input">
+                <input type="email" name="email" placeholder="Ваш Email" required class="glass-input">
+                <textarea name="comment_text" placeholder="Текст комментария, на который жалуетесь" required class="glass-input" rows="2"></textarea>
+                <div class="input-row">
+                    <input type="text" name="comment_author" placeholder="Автор" required class="glass-input half">
+                    <input type="date" name="comment_date" required class="glass-input half" title="Дата комментария">
+                </div>
+                
+                <!-- Капча -->
+                <div class="captcha-box">
+                    <span id="captchaQuestion">Сколько будет ...?</span>
+                    <input type="number" id="captchaInput" placeholder="Ответ" required class="glass-input captcha-input">
+                </div>
+                
+                <button class="btn-report" id="submitReportBtn" type="submit">Отправить жалобу</button>
+            </form>
+
+            <p style="margin-top:1em; font-size: 14px;">Или используйте наш <a href="https://discordapp.com/users/1340334027730714706/" class="glass-link">Discord</a>.</p>
           </div>
         `;
         document.body.appendChild(modal);
       }
       
       if (openBtn && modal) {
-        openBtn.onclick = () => { modal.style.display = 'flex'; }; 
-        const closeModal = () => { modal.style.display = 'none'; };
+        const glassPanel = document.getElementById('modalGlassPanel');
         
-        modal.querySelectorAll('#closeReportModal, #closeReportModal2, #modalReportBackdrop').forEach(el => {
+        openBtn.onclick = () => { 
+            modal.style.display = 'flex'; 
+            glassPanel.classList.remove('glass-fade-out');
+            generateCaptcha(); // Генерируем капчу при каждом открытии
+        }; 
+        
+        const closeModal = () => { 
+            glassPanel.classList.add('glass-fade-out');
+            // Ждем 300мс (пока идет анимация), затем скрываем окно
+            setTimeout(() => {
+                modal.style.display = 'none';
+                glassPanel.classList.remove('glass-fade-out');
+            }, 300);
+        };
+        
+        modal.querySelectorAll('#closeReportModal, #modalReportBackdrop').forEach(el => {
           if (el) el.onclick = closeModal;
         });
         
         window.addEventListener('keydown', e => {
           if (modal.style.display === 'flex' && (e.key === 'Escape' || e.key === 'Esc')) closeModal();
         });
+
+        // Проверка капчи перед отправкой
+        const form = document.getElementById('reportForm');
+        if (form) {
+            form.onsubmit = (e) => {
+                const userAnswer = parseInt(document.getElementById('captchaInput').value);
+                if (userAnswer !== currentCaptchaAnswer) {
+                    e.preventDefault(); // Отменяем отправку письма
+                    alert('Неверный ответ в капче! Попробуйте еще раз.');
+                    generateCaptcha(); // Обновляем задание
+                }
+            };
+        }
       }
     });
 </script>
@@ -321,21 +383,53 @@
 }
 
 /* Эффект стекла */
+/* --- Адаптивное окно Liquid Glass --- */
 .modal-report-content.glass-panel {
   position: relative;
   z-index: 10000;
-  width: 90%;
-  max-width: 420px;
-  padding: 30px;
+  width: 90%; /* На телефонах занимает 90% ширины экрана */
+  max-width: 380px; /* На ноутбуках окно не будет шире 380px (аккуратная колонка) */
+  max-height: 85vh; /* Максимальная высота - 85% от экрана, чтобы оставались отступы сверху и снизу */
+  overflow-y: auto; /* Включаем вертикальную прокрутку, если форма не влезает */
+  
+  padding: 25px 20px; /* Слегка уменьшенные отступы для маленьких экранов */
   border-radius: 24px;
   text-align: center;
+  
+  /* Эффект стекла */
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   color: #fff;
-  animation: glassSlideUp 0.3s ease-out;
+  animation: glassSlideUp 0.3s ease-out forwards;
+}
+
+/* --- Стилизация ползунка прокрутки (Webkit: Chrome, Safari, Edge) --- */
+.modal-report-content.glass-panel::-webkit-scrollbar {
+  width: 6px; /* Делаем ползунок тонким и аккуратным */
+}
+
+.modal-report-content.glass-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05); /* Едва заметная дорожка */
+  border-radius: 10px;
+  margin: 15px 0; /* Отступы от краев окна */
+}
+
+.modal-report-content.glass-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25); /* Полупрозрачный белый ползунок */
+  border-radius: 10px;
+}
+
+.modal-report-content.glass-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4); /* Чуть ярче при наведении */
+}
+
+/* --- Стилизация ползунка для Firefox --- */
+.modal-report-content.glass-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
 }
 
 @keyframes glassSlideUp {
@@ -433,4 +527,6 @@
           <!-- Оригинальный разработчик: https://github.com/webunrkn  -->
 </body>
 </html>
+
+
 
