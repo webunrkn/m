@@ -423,14 +423,14 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="modal-report-backdrop" id="modalBackdrop" style="position:absolute; width:100%; height:100%;"></div>
             <div class="glass-panel" id="reportPanel">
                 <button class="modal-report-close" id="closeX">×</button>
-                <h2 style="margin: 0 0 5px 0;">Жалоба на сообщение</h2>
+                <h2 style="margin: 0 0 5px 0;"><font color="skyblue">Жалоба на сообщение</font></h2>
                 <p style="font-size: 14px; opacity: 0.6; margin-bottom: 15px;">Заполните все поля, чтобы мы могли разобраться</p>
                 
                 <div style="display: flex; justify-content: center; margin: 10px 0;">
                     <img src="img/error.gif" style="border-radius: 25px; width: 140px;" alt="!">
                 </div>
                 
-                <form id="reportForm" action="ТВОЙ_ОБРАБОТЧИК_ИЛИ_EMAIL_API" method="POST" class="glass-form">
+                <form id="reportForm" action="https://formspree.io/f/xaqvnyrz" method="POST" class="glass-form">
                     <!-- ПОЛЕ НИКНЕЙМА -->
                     <input type="text" name="user_nick" placeholder="Ваш никнейм" required class="glass-input">
                     
