@@ -354,6 +354,27 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
+    /* НОВЫЙ БЛОК ДЛЯ АКТИВАЦИИ АНИМАЦИИ */
+.modal-report.active .glass-panel {
+    display: block; /* Убеждаемся, что окно видно */
+    animation: liquidAppear 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.2) forwards;
+}
+
+/* САМИ КАДРЫ АНИМАЦИИ ПОЯВЛЕНИЯ */
+@keyframes liquidAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+    }
+}
   </style>
 </head>
 <body class="posts-page">
@@ -440,21 +461,23 @@
 <!-- Оригинальная страница: https://webunrkn.github.io/m/  -->
           <!-- Оригинальный разработчик: https://github.com/webunrkn  -->
   <script src="assets/script.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function() {
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
     const openBtn = document.getElementById('openReportModal');
     let currentCaptchaAnswer = 0;
 
-    // Функция генерации капчи
+    // 1. Функция генерации капчи (математический пример)
     function generateCaptcha() {
         const n1 = Math.floor(Math.random() * 10) + 1;
         const n2 = Math.floor(Math.random() * 10) + 1;
         currentCaptchaAnswer = n1 + n2;
         const q = document.getElementById('captchaQuestion');
         if (q) q.innerText = `${n1} + ${n2} = ?`;
-        document.getElementById('captchaInput').value = '';
+        const input = document.getElementById('captchaInput');
+        if (input) input.value = '';
     }
 
-    // Создаем модалку, если её нет
+    // 2. Создание структуры модалки (если её нет в HTML)
     let modal = document.getElementById('modalReport');
     if (!modal) {
         modal = document.createElement('div');
@@ -462,12 +485,14 @@
         modal.id = 'modalReport';
         modal.innerHTML = `
             <div class="modal-report-backdrop" id="modalBackdrop"></div>
-            <div class="glass-panel">
+            <div class="glass-panel" id="reportPanel">
                 <button class="modal-report-close" id="closeX">×</button>
                 <h3>Жалоба на сообщение</h3>
-                <img src="img/error.gif" style="border-radius: 40px; width: 150px; margin: 10px 0;" alt="!">
+                <div style="display: flex; justify-content: center; margin: 10px 0;">
+                    <img src="img/error.gif" style="border-radius: 40px; width: 150px;" alt="!">
+                </div>
                 
-                <form id="reportForm" action="https://formspree.io/f/xaqvnyrz" method="POST" class="glass-form">
+                <form id="reportForm" action="ТВОЙ_URL" method="POST" class="glass-form">
                     <input type="text" name="user_nick" placeholder="Ваш никнейм" required class="glass-input">
                     <input type="email" name="user_email" placeholder="Ваш Email" required class="glass-input">
                     <textarea name="msg_text" placeholder="Текст комментария..." required class="glass-input" rows="2"></textarea>
@@ -482,46 +507,51 @@
                     <button type="submit" class="btn-report-submit">Отправить жалобу</button>
                 </form>
                 
-                <p style="font-size: 13px; opacity: 0.8;">
-                    Или наш <a href="https://discordapp.com/users/1340334027730714706/" style="color: #5865F2; font-weight: bold;">Discord</a>.
+                <p style="font-size: 13px; opacity: 0.8; margin-top: 10px;">
+                    Или используйте наш <a href="https://discordapp.com/users/1340334027730714706/" style="color: #5865F2; font-weight: bold; text-decoration: none;">Discord</a>.
                 </p>
             </div>
         `;
         document.body.appendChild(modal);
     }
 
+    // 3. Логика кнопок
     if (openBtn) {
         const closeMod = () => {
-            modal.classList.add('exit');
+            modal.classList.add('exit'); // Запускаем анимацию исчезновения
             setTimeout(() => {
                 modal.classList.remove('active');
                 modal.classList.remove('exit');
-            }, 300);
+            }, 300); // Ждем 0.3 сек, пока отработает CSS анимация
         };
 
+        // Открытие
         openBtn.onclick = (e) => {
             e.preventDefault();
-            modal.classList.add('active');
+            modal.classList.remove('exit');
+            modal.classList.add('active'); // Запускает анимацию появления (liquidAppear)
             generateCaptcha();
         };
 
+        // Закрытие по крестику, фону или Escape
         document.getElementById('closeX').onclick = closeMod;
         document.getElementById('modalBackdrop').onclick = closeMod;
-        
-        window.onkeydown = (e) => { if (e.key === 'Escape') closeMod(); };
+        window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMod(); });
 
-        // Валидация капчи
-        document.getElementById('reportForm').onsubmit = function(e) {
+        // 4. Валидация капчи перед отправкой
+        const form = document.getElementById('reportForm');
+        form.onsubmit = function(e) {
             const ans = parseInt(document.getElementById('captchaInput').value);
             if (ans !== currentCaptchaAnswer) {
                 e.preventDefault();
-                alert('Ошибка капчи! Попробуйте еще раз.');
+                alert('Ошибка капчи! Решите пример правильно.');
                 generateCaptcha();
             }
         };
     }
 });
 </script>
+
  
   <script>
     // Make .thread-card clickable and keyboard-accessible when data-href is present
