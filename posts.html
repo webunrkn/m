@@ -308,6 +308,52 @@
     background: none; border: none; color: rgba(255,255,255,0.5);
     font-size: 24px; cursor: pointer;
 }
+    /* --- КАСТОМНЫЙ СКРОЛЛБАР (ЛИНИЯ ПРОКРУТКИ) --- */
+
+/* 1. Стили для стеклянного окна (основное) */
+.glass-panel::-webkit-scrollbar {
+    width: 5px; /* Ширина линии */
+}
+
+.glass-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03); /* Почти прозрачный путь */
+    border-radius: 10px;
+    margin: 15px 0; /* Отступы сверху и снизу, чтобы линия не прилипала к краям */
+}
+
+.glass-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* Цвет самой "линии" */
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Легкий контур */
+    transition: 0.3s;
+}
+
+.glass-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4); /* Яркость при наведении */
+}
+
+/* 2. Поддержка для Firefox */
+.glass-panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+
+/* 3. Для всего сайта */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #121212; 
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
   </style>
 </head>
 <body class="posts-page">
