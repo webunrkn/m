@@ -35,11 +35,12 @@
       </nav>
     </div>
   </header>
- <!-- Контейнер карусели -->
+
+  <!-- Контейнер карусели -->
 <div class="v-carousel-container" id="v-carousel">
     <div class="v-carousel-track" id="v-carousel-track">
         
-        <!-- Слайд 1 -->
+   <!-- Слайд 1 -->
         <div class="v-carousel-slide">
             <!-- Ссылка для слайда -->
             <a href="https://youtu.be/dQw4w9WgXcQ?si=3spcqy6mNEaWCR7N" target="_blank">
@@ -64,9 +65,6 @@
                 <div class="v-carousel-title">Узнайте о Яблоке в ТГ!</div>
             </a>
         </div>
-        
-
-    </div>
 
     <!-- Кнопки управления (Glassmorphism) -->
     <button class="v-carousel-btn v-carousel-prev" id="v-carousel-prev" aria-label="Назад">&#10094;</button>
@@ -77,21 +75,23 @@
 <style>
     .v-carousel-container {
         position: relative;
-        width: 100%;
-        max-width: 100%; /* Займет всю ширину родителя */
-        margin: 0 auto;
+        /* Настройки ширины и отступов для ПК */
+        max-width: 1200px; 
+        width: 90%; 
+        margin: 80px auto 40px auto; /* 80px отступ сверху, auto по бокам, 40px снизу */
+        
         overflow: hidden;
-        border-radius: 12px; /* Легкое закругление углов, можно убрать */
-        background: #111; /* Цвет заглушки, пока грузятся фото */
+        border-radius: 12px;
+        background: #111;
         z-index: 10;
-        /* Если Nav-bar fixed, добавь сюда margin-top, например: margin-top: 60px; */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Легкая тень для красоты */
     }
 
     .v-carousel-track {
         display: flex;
         width: 100%;
         height: 100%;
-        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Плавная анимация пролистывания */
+        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .v-carousel-slide {
@@ -110,20 +110,19 @@
 
     .v-carousel-slide img {
         width: 100%;
-        height: 300px; /* Высота для ПК */
-        object-fit: cover; /* Изображение будет красиво обрезаться, не искажая пропорции */
+        height: 300px; /* Новая высота для ПК */
+        object-fit: cover;
         display: block;
         transition: transform 0.5s ease;
     }
 
-    /* Легкий зум фото при наведении */
     .v-carousel-slide:hover img {
         transform: scale(1.03);
     }
 
     .v-carousel-title {
         position: absolute;
-        bottom: -60px; /* Спрятано по умолчанию */
+        bottom: -60px;
         left: 0;
         width: 100%;
         padding: 30px 20px 20px;
@@ -136,10 +135,9 @@
         opacity: 0;
         transition: all 0.4s ease;
         box-sizing: border-box;
-        pointer-events: none; /* Чтобы текст не перебивал клик по ссылке */
+        pointer-events: none;
     }
 
-    /* Появление текста при наведении */
     .v-carousel-slide:hover .v-carousel-title {
         bottom: 0;
         opacity: 1;
@@ -152,7 +150,7 @@
         transform: translateY(-50%);
         background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px); /* Для Safari */
+        -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: rgba(255, 255, 255, 0.9);
         width: 50px;
@@ -182,9 +180,16 @@
 
     /* Адаптация под мобильные устройства */
     @media (max-width: 768px) {
-        .v-carousel-slide img {
-            height: 250px; /* Уменьшаем высоту для телефонов */
+        .v-carousel-container {
+            width: 95%; /* Чуть шире на мобилках */
+            margin-top: 40px; /* Отступ сверху меньше */
+            border-radius: 8px;
         }
+
+        .v-carousel-slide img {
+            height: 200px; /* Высота под мобильные экраны */
+        }
+        
         .v-carousel-btn {
             width: 40px;
             height: 40px;
@@ -196,7 +201,6 @@
         .v-carousel-title {
             font-size: 1rem;
             padding: 20px 15px 15px;
-            /* На мобилках нет hover, поэтому текст показываем сразу, но делаем фон менее агрессивным */
             bottom: 0;
             opacity: 1;
             background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
@@ -217,7 +221,6 @@
         const slideCount = slides.length;
         let autoPlayInterval;
 
-        // Если слайд всего 1, скрываем стрелки и не запускаем логику
         if (slideCount <= 1) {
             if (btnPrev) btnPrev.style.display = 'none';
             if (btnNext) btnNext.style.display = 'none';
@@ -238,7 +241,6 @@
             updateCarousel();
         };
 
-        // Запуск автопролистывания каждые 4 секунды (4000 мс)
         const startAutoPlay = () => {
             autoPlayInterval = setInterval(nextSlide, 4000);
         };
@@ -250,7 +252,7 @@
         btnNext.addEventListener('click', () => {
             nextSlide();
             stopAutoPlay();
-            startAutoPlay(); // Сброс таймера при ручном клике
+            startAutoPlay();
         });
 
         btnPrev.addEventListener('click', () => {
@@ -259,11 +261,9 @@
             startAutoPlay();
         });
 
-        // Останавливаем карусель, когда мышка наведена (чтобы юзер мог прочитать текст или нажать на ссылку)
         container.addEventListener('mouseenter', stopAutoPlay);
         container.addEventListener('mouseleave', startAutoPlay);
         
-        // Для мобилок - остановка автоплея при касании
         container.addEventListener('touchstart', stopAutoPlay, {passive: true});
         container.addEventListener('touchend', startAutoPlay, {passive: true});
 
