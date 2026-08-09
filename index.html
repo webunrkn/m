@@ -15,7 +15,27 @@
         <span>На сайте ведутся технические работы, некоторые функции могут работать некорректно.</span>
         <button id="closeMaintenanceBanner" class="maintenance-close" title="Закрыть">×</button>
     </div> -->
-  <!-- Контейнер карусели -->
+ 
+  <div class="bg-anim" aria-hidden="true"></div>
+  <div id="pageLoader" class="loader-overlay">
+    <div class="loader-circle" aria-hidden="true"></div>
+    <div class="loader-text">Загрузка</div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+  <a class="brand" href="index.html">UNРКН</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Открыть меню">☰</button>
+      <nav class="nav" id="mainNav">
+  <a href="index.html" class="active">Главная</a>
+  <a href="info.html">Инфо</a>
+  <a href="runet.html">РУНЕТ</a>
+  <a href="vk.html">ВК</a>
+  <a href="posts.html">Посты</a>
+      </nav>
+    </div>
+  </header>
+ <!-- Контейнер карусели -->
 <div class="v-carousel-container" id="v-carousel">
     <div class="v-carousel-track" id="v-carousel-track">
         
@@ -90,7 +110,7 @@
 
     .v-carousel-slide img {
         width: 100%;
-        height: 450px; /* Высота для ПК */
+        height: 300px; /* Высота для ПК */
         object-fit: cover; /* Изображение будет красиво обрезаться, не искажая пропорции */
         display: block;
         transition: transform 0.5s ease;
@@ -250,26 +270,6 @@
         startAutoPlay();
     });
 </script>
-  <div class="bg-anim" aria-hidden="true"></div>
-  <div id="pageLoader" class="loader-overlay">
-    <div class="loader-circle" aria-hidden="true"></div>
-    <div class="loader-text">Загрузка</div>
-  </div>
-
-  <header class="site-header">
-    <div class="container header-inner">
-  <a class="brand" href="index.html">UNРКН</a>
-      <button class="nav-toggle" id="navToggle" aria-label="Открыть меню">☰</button>
-      <nav class="nav" id="mainNav">
-  <a href="index.html" class="active">Главная</a>
-  <a href="info.html">Инфо</a>
-  <a href="runet.html">РУНЕТ</a>
-  <a href="vk.html">ВК</a>
-  <a href="posts.html">Посты</a>
-      </nav>
-    </div>
-  </header>
-
   <main class="container">
     <section class="hero animate fade-up">
       <div class="hero-inner">
