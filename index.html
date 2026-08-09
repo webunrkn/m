@@ -9,11 +9,247 @@
   <link rel="stylesheet" href="assets/tehwork.css">
 </head>
 <body>
+
   <!-- Всплывающее окно о технических работах -->
- <div id="maintenanceBanner" class="maintenance-banner">
+  <!-- <div id="maintenanceBanner" class="maintenance-banner">
         <span>На сайте ведутся технические работы, некоторые функции могут работать некорректно.</span>
         <button id="closeMaintenanceBanner" class="maintenance-close" title="Закрыть">×</button>
+    </div> -->
+  <!-- Контейнер карусели -->
+<div class="v-carousel-container" id="v-carousel">
+    <div class="v-carousel-track" id="v-carousel-track">
+        
+        <!-- Слайд 1 -->
+        <div class="v-carousel-slide">
+            <!-- Ссылка для слайда -->
+            <a href="https://youtu.be/dQw4w9WgXcQ?si=3spcqy6mNEaWCR7N" target="_blank">
+                <img src="img/rick.jpg" alt="Баннер 1 - Rick">
+                <!-- Текст при наведении -->
+                <div class="v-carousel-title">Rick Astley</div>
+            </a>
+        </div>
+
+        <!-- Слайд 2 -->
+        <div class="v-carousel-slide">
+            <a href="https://www.yabloko.ru/" target="_blank">
+                <img src="img/banner.png" alt="Баннер 1 - Яблоко">
+                <div class="v-carousel-title">Партия Яблоко - делай выбор!</div>
+            </a>
+        </div>
+
+        <!-- Слайд 3 -->
+        <div class="v-carousel-slide">
+            <a href="https://t.me/yabloko_party" target="_blank">
+                <img src="img/yabloko.png" alt="Баннер 3 - Яблоко">
+                <div class="v-carousel-title">Узнайте о Яблоке в ТГ!</div>
+            </a>
+        </div>
+        
+
     </div>
+
+    <!-- Кнопки управления (Glassmorphism) -->
+    <button class="v-carousel-btn v-carousel-prev" id="v-carousel-prev" aria-label="Назад">&#10094;</button>
+    <button class="v-carousel-btn v-carousel-next" id="v-carousel-next" aria-label="Вперед">&#10095;</button>
+</div>
+
+<!-- Изолированные стили -->
+<style>
+    .v-carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%; /* Займет всю ширину родителя */
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 12px; /* Легкое закругление углов, можно убрать */
+        background: #111; /* Цвет заглушки, пока грузятся фото */
+        z-index: 10;
+        /* Если Nav-bar fixed, добавь сюда margin-top, например: margin-top: 60px; */
+    }
+
+    .v-carousel-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Плавная анимация пролистывания */
+    }
+
+    .v-carousel-slide {
+        flex: 0 0 100%;
+        min-width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .v-carousel-slide a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+
+    .v-carousel-slide img {
+        width: 100%;
+        height: 450px; /* Высота для ПК */
+        object-fit: cover; /* Изображение будет красиво обрезаться, не искажая пропорции */
+        display: block;
+        transition: transform 0.5s ease;
+    }
+
+    /* Легкий зум фото при наведении */
+    .v-carousel-slide:hover img {
+        transform: scale(1.03);
+    }
+
+    .v-carousel-title {
+        position: absolute;
+        bottom: -60px; /* Спрятано по умолчанию */
+        left: 0;
+        width: 100%;
+        padding: 30px 20px 20px;
+        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+        color: #ffffff;
+        font-family: sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        text-align: center;
+        opacity: 0;
+        transition: all 0.4s ease;
+        box-sizing: border-box;
+        pointer-events: none; /* Чтобы текст не перебивал клик по ссылке */
+    }
+
+    /* Появление текста при наведении */
+    .v-carousel-slide:hover .v-carousel-title {
+        bottom: 0;
+        opacity: 1;
+    }
+
+    /* Стрелочки (Glassmorphism) */
+    .v-carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px); /* Для Safari */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 20;
+        padding: 0;
+        outline: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .v-carousel-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+        transform: translateY(-50%) scale(1.1);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .v-carousel-prev { left: 20px; }
+    .v-carousel-next { right: 20px; }
+
+    /* Адаптация под мобильные устройства */
+    @media (max-width: 768px) {
+        .v-carousel-slide img {
+            height: 250px; /* Уменьшаем высоту для телефонов */
+        }
+        .v-carousel-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            left: 10px;
+        }
+        .v-carousel-next { right: 10px; left: auto; }
+        
+        .v-carousel-title {
+            font-size: 1rem;
+            padding: 20px 15px 15px;
+            /* На мобилках нет hover, поэтому текст показываем сразу, но делаем фон менее агрессивным */
+            bottom: 0;
+            opacity: 1;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+        }
+    }
+</style>
+
+<!-- Логика карусели -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const track = document.getElementById('v-carousel-track');
+        const slides = document.querySelectorAll('.v-carousel-slide');
+        const btnPrev = document.getElementById('v-carousel-prev');
+        const btnNext = document.getElementById('v-carousel-next');
+        const container = document.getElementById('v-carousel');
+
+        let currentIndex = 0;
+        const slideCount = slides.length;
+        let autoPlayInterval;
+
+        // Если слайд всего 1, скрываем стрелки и не запускаем логику
+        if (slideCount <= 1) {
+            if (btnPrev) btnPrev.style.display = 'none';
+            if (btnNext) btnNext.style.display = 'none';
+            return; 
+        }
+
+        const updateCarousel = () => {
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        };
+
+        const nextSlide = () => {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateCarousel();
+        };
+
+        const prevSlide = () => {
+            currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            updateCarousel();
+        };
+
+        // Запуск автопролистывания каждые 4 секунды (4000 мс)
+        const startAutoPlay = () => {
+            autoPlayInterval = setInterval(nextSlide, 4000);
+        };
+
+        const stopAutoPlay = () => {
+            clearInterval(autoPlayInterval);
+        };
+
+        btnNext.addEventListener('click', () => {
+            nextSlide();
+            stopAutoPlay();
+            startAutoPlay(); // Сброс таймера при ручном клике
+        });
+
+        btnPrev.addEventListener('click', () => {
+            prevSlide();
+            stopAutoPlay();
+            startAutoPlay();
+        });
+
+        // Останавливаем карусель, когда мышка наведена (чтобы юзер мог прочитать текст или нажать на ссылку)
+        container.addEventListener('mouseenter', stopAutoPlay);
+        container.addEventListener('mouseleave', startAutoPlay);
+        
+        // Для мобилок - остановка автоплея при касании
+        container.addEventListener('touchstart', stopAutoPlay, {passive: true});
+        container.addEventListener('touchend', startAutoPlay, {passive: true});
+
+        startAutoPlay();
+    });
+</script>
   <div class="bg-anim" aria-hidden="true"></div>
   <div id="pageLoader" class="loader-overlay">
     <div class="loader-circle" aria-hidden="true"></div>
